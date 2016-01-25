@@ -39,6 +39,8 @@
 #define kDataManager [HACDataManager sharedInstance]
 
 // 颜色
+#define UIColorFromRGB(rgbValue)   [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0f green:((float)((rgbValue & 0xFF00) >> 8))/255.0f blue:((float)(rgbValue & 0xFF))/255.0f alpha:1.0f]
+#define UIColorWithRGBA(r,g,b,a)   [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:a]
 #define Color(r,g,b) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0]
 #define ColorA(r,g,b,a) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:a/1.0]
 #define ColorI(c) [UIColor colorWithRed:((c>>16)&0xff)/255.0 green:((c>>8)&0xff)/255.0 blue:(c&0xff)/255.0 alpha:1.0] // ColorI(0xbfbfbf)
@@ -76,12 +78,50 @@
 #define KCameraBarHeight 40
 #define kTabBarFrame CGRectMake(0.0, KContentHeight-80, 320.0, 80)
 
+#define DOT_COORDINATE                  0.0f
+#define STATUS_BAR_HEIGHT               20.0f
+#define BAR_ITEM_WIDTH_HEIGHT           30.0f
+#define NAVIGATION_BAR_HEIGHT           44.0f
+#define TAB_TAB_HEIGHT                  49.0f
+#define TABLE_VIEW_ROW_HEIGHT           NAVIGATION_BAR_HEIGHT
+#define CONTENT_VIEW_HEIGHT_NO_TAB_BAR  (SCREEN_HEIGHT - STATUS_BAR_HEIGHT - NAVIGATION_BAR_HEIGHT)
+#define CONTENT_VIEW_HEIGHT_TAB_BAR     (CONTENT_VIEW_HEIGHT_NO_TAB_BAR - TAB_TAB_HEIGHT)
+
+
+// 检查系统版本
+// 版本是否 == v
+#define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
+// 版本是否 > v
+#define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
+// 版本是否 >= v
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+// 版本是否 < v
+#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+// 版本是否 <= v
+#define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
+
 // iOS系统版本
 #define iOS6  ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0)
 #define IOS7 [[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0
 #define IOS8 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
 #define IOS9 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 9.0)
 #define iphone4 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 960), [[UIScreen mainScreen] currentMode].size) : NO)
+
+#define IS_OS_5_OR_LATER                            SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"5.0")
+#define IS_OS_6_OR_LATER                            SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0")
+#define IS_OS_7_OR_LATER                            SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")
+#define IS_OS_8_OR_LATER                            SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")
+#define IS_OS_9_OR_LATER                            SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0")
+
+
+#define IS_WIDESCREEN_5                            (fabs((double)[[UIScreen mainScreen] bounds].size.height - (double)568) < __DBL_EPSILON__)
+#define IS_WIDESCREEN_6                            (fabs((double)[[UIScreen mainScreen] bounds].size.height - (double)667) < __DBL_EPSILON__)
+#define IS_WIDESCREEN_6Plus                        (fabs((double)[[UIScreen mainScreen] bounds].size.height - (double)736) < __DBL_EPSILON__)
+#define IS_IPHONE                                  ([[[UIDevice currentDevice] model] isEqualToString: @"iPhone"] || [[[UIDevice currentDevice] model] isEqualToString: @"iPhone Simulator"])
+#define IS_IPOD                                    ([[[UIDevice currentDevice] model] isEqualToString: @"iPod touch"])
+#define IS_IPHONE_5                                (IS_IPHONE && IS_WIDESCREEN_5)
+#define IS_IPHONE_6                                (IS_IPHONE && IS_WIDESCREEN_6)
+#define IS_IPHONE_6Plus                            (IS_IPHONE && IS_WIDESCREEN_6Plus)
 
 // 手机型号
 #define IS_IPHONE6_PLUS (KScreenWidth > 375)
@@ -117,6 +157,7 @@
 
 // *********************************** 配置信息 ***********************************
 /*-------------------- 版本号 --------------------*/
+// APP版本的判断
 #define KClientVersion [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]
 // bunld版本号
 #define KBUILD_VERSION [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]
@@ -133,6 +174,13 @@
 #define AlertTitle [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"]
 #define AppName [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleNameKey]
 #define appActive ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive)
+
+// 获取storybord
+#define MAIN_STORY_BOARD(Name)                      [UIStoryboard storyboardWithName:Name bundle:nil]
+
+// 通知中心
+#define NS_NOTIFICATION_CENTER                      [NSNotificationCenter defaultCenter]
+
 
 // *********************************** UI标准元素 ***********************************
 // 开关背景颜色
