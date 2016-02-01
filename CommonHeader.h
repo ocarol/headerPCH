@@ -8,7 +8,7 @@
 
 // *********************************** 信息显示 ***********************************
 #define ErrorMessage @"网络繁忙请稍后再试"
-
+#define Alert(msg) [[[UIAlertView alloc] initWithTitle:@"" message:(msg) delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil,nil] show]
 
 // *********************************** 数据存储与读取 ***********************************
 // 偏好设置
@@ -45,12 +45,16 @@
 #define ColorA(r,g,b,a) [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:a/1.0]
 #define ColorI(c) [UIColor colorWithRed:((c>>16)&0xff)/255.0 green:((c>>8)&0xff)/255.0 blue:(c&0xff)/255.0 alpha:1.0] // ColorI(0xbfbfbf)
 #define ColorGray(f) [UIColor colorWithWhite:f/255.0 alpha:1.0]
+// 随机色
+#define RandomColor [UIColor colorWithRed:arc4random_uniform(256) / 255.0 green:arc4random_uniform(256) / 255.0 blue:arc4random_uniform(256) / 255.0 alpha:1]
 
 // font
 #define FontMainScore(s) [UIFont fontWithName:@"Avenir-Light" size:s]
 #define Font(s) (IOS9 ? [UIFont systemFontOfSize:s] : [UIFont fontWithName:@"STHeitiSC-Light" size:s]) // San Francisco
 #define FontBold(s) (IOS9 ? [UIFont boldSystemFontOfSize:s] : [UIFont fontWithName:@"STHeitiSC-Medium" size:s])
 #define FontNum(s) [UIFont fontWithName:@"Avenir-Light" size:s]
+//方正黑体简体字体定义
+#define FONT_FZ(f) [UIFont fontWithName:@"FZHTJW--GB1-0" size:f]
 
 // 4ihch字体
 #define	FONT_4INCH_ADAPTED_WIDTH(s) Font(s)
@@ -117,8 +121,10 @@
 #define IS_WIDESCREEN_5                            (fabs((double)[[UIScreen mainScreen] bounds].size.height - (double)568) < __DBL_EPSILON__)
 #define IS_WIDESCREEN_6                            (fabs((double)[[UIScreen mainScreen] bounds].size.height - (double)667) < __DBL_EPSILON__)
 #define IS_WIDESCREEN_6Plus                        (fabs((double)[[UIScreen mainScreen] bounds].size.height - (double)736) < __DBL_EPSILON__)
+// 判断是真机还是模拟器
 #define IS_IPHONE                                  ([[[UIDevice currentDevice] model] isEqualToString: @"iPhone"] || [[[UIDevice currentDevice] model] isEqualToString: @"iPhone Simulator"])
 #define IS_IPOD                                    ([[[UIDevice currentDevice] model] isEqualToString: @"iPod touch"])
+#define IS_PAD                                     (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 #define IS_IPHONE_5                                (IS_IPHONE && IS_WIDESCREEN_5)
 #define IS_IPHONE_6                                (IS_IPHONE && IS_WIDESCREEN_6)
 #define IS_IPHONE_6Plus                            (IS_IPHONE && IS_WIDESCREEN_6Plus)
@@ -181,6 +187,9 @@
 // 通知中心
 #define NS_NOTIFICATION_CENTER                      [NSNotificationCenter defaultCenter]
 
+//获取当前语言
+#define CurrentLanguage ([[NSLocale preferredLanguages] objectAtIndex:0])
+
 
 // *********************************** UI标准元素 ***********************************
 // 开关背景颜色
@@ -221,7 +230,7 @@
 #define KheaderColor MAIN_FONT_COLOR
 
 
-//color
+// 常用color
 #define KClearColor [UIColor clearColor]
 #define KWhiteColor [UIColor whiteColor]
 #define KBlackColor [UIColor blackColor]
@@ -248,6 +257,14 @@
 #define SessionInfo [KSessionInfo sharedSessionInfo]
 #define USER_ID [KSessionInfo sharedSessionInfo].uid
 #define USER_SESSION [KSessionInfo sharedSessionInfo].sid
+
+// 系统控件默认高度
+#define kStatusBarHeight (20.f)
+#define kTopBarHeight (44.f)
+#define kBottomBarHeight (49.f)
+#define kCellDefaultHeight (44.f)
+#define kEnglishKeyboardHeight (216.f)
+#define kChineseKeyboardHeight (252.f)
 
 // *********************************** 调试信息 ***********************************
 #define LOG     NSLog
@@ -564,6 +581,27 @@ stringByReplacingOccurrencesOfString:@"&apos;" withString:@"|'"]
 #endif
 #endif
 
+
+#define NSDetailLog(format, ...) \
+do { \
+NSLog(@"<%@ : %d : %s>-: %@", \
+[[NSString stringWithUTF8String:__FILE__] lastPathComponent], \
+__LINE__, \
+__FUNCTION__, \
+[NSString stringWithFormat:format, ##__VA_ARGS__]); \
+} while(0)
+
+
+//判断是否要Log
+#ifdef NEED_DEBUG
+#define NSDetailLog(format, ...) \
+//Log定义...
+#else
+#define NSDetailLog(format, ...) do{ } while(0)
+#endif
+
+
+
 #pragma mark - degrees/radian functions
 #define degreesToRadian(x) (M_PI * (x) / 180.0)
 #define radianToDegrees(radian) (radian*180.0)/(M_PI)
@@ -571,6 +609,61 @@ stringByReplacingOccurrencesOfString:@"&apos;" withString:@"|'"]
 #define kcarcolors @{ColorI(0xbbc8d0):@"银色",ColorI(0x596064):@"灰色",ColorI(0x2f3336):@"黑色",ColorI(0xd5c9a6):@"香槟色",ColorI(0xf8f8f8):@"白色",ColorI(0xfecc2f):@"黄色",ColorI(0xfc3b2f):@"红色",ColorI(0xa16b3f):@"棕色",ColorI(0x70ce3f):@"绿色",ColorI(0x4ab4f0):@"蓝色"}
 #define kalertviewtag 526170
 
+// *************************** 其他方法 ********************************
 
 #define NumToString(n) [NSString stringWithFormat:@"%@",n]
+
+//app主窗口
+#define SCKeyWindow [UIApplication sharedApplication].keyWindow
+
+// 状态条高度
+#define SCStatusBarHeight [UIApplication sharedApplication].statusBarFrame.size.height
+
+// G－C－D
+// 在Main线程上运行
+#define DISPATCH_ON_MAIN_THREAD(mainQueueBlock) dispatch_async(dispatch_get_main_queue(), mainQueueBlock);
+// 在Global Queue上运行
+#define DISPATCH_ON_GLOBAL_QUEUE_HIGH(globalQueueBlocl) dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), globalQueueBlocl);
+#define DISPATCH_ON_GLOBAL_QUEUE_DEFAULT(globalQueueBlocl) dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), globalQueueBlocl);
+#define DISPATCH_ON_GLOBAL_QUEUE_LOW(globalQueueBlocl) dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), globalQueueBlocl);
+#define DISPATCH_ON_GLOBAL_QUEUE_BACKGROUND(globalQueueBlocl) dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), globalQueueBlocl);
+
+// 由角度获取弧度 有弧度获取角度
+#define degreesToRadian(x) (M_PI * (x) / 180.0)
+#define radianToDegrees(radian) (radian*180.0)/(M_PI)
+
+// 加载xib
+#define LoadNib(x) [[NSBundle mainBundle] loadNibNamed:@(x) owner:nil options:nil][0]
+
+// 在宏的参数前加上一个#，宏的参数会自动转换成c语言的字符串
+#define MRKeyPath(objc,keyPath) @(((void)objc.keyPath, #keyPath))
+
+
+//** 获得当前的 年 月 日 时 分 秒 *****************************************************************************
+#define CurrentSec [[NSCalendar currentCalendar] component:NSCalendarUnitSecond fromDate:[NSDate date]]
+#define CurrentMin [[NSCalendar currentCalendar] component:NSCalendarUnitMinute fromDate:[NSDate date]]
+#define CurrentHour [[NSCalendar currentCalendar] component:NSCalendarUnitHour fromDate:[NSDate date]]
+#define CurrentDay [[NSCalendar currentCalendar] component:NSCalendarUnitDay fromDate:[NSDate date]]
+#define CurrentMonth [[NSCalendar currentCalendar] component:NSCalendarUnitMonth fromDate:[NSDate date]]
+#define CurrentYear [[NSCalendar currentCalendar] component:NSCalendarUnitYear fromDate:[NSDate date]]
+
+
+// View 圆角和加边框
+#define ViewBorderRadius(View, Radius, Width, Color)\
+[View.layer setCornerRadius:(Radius)];\
+[View.layer setMasksToBounds:YES];\
+[View.layer setBorderWidth:(Width)];\
+[View.layer setBorderColor:[Color CGColor]]
+
+// UIView - viewWithTag
+#define VIEWWITHTAG(_OBJECT, _TAG) [_OBJECT viewWithTag : _TAG]
+
+// 本地化字符串
+/** NSLocalizedString宏做的其实就是在当前bundle中查找资源文件名“Localizable.strings”(参数:键＋注释) */
+#define LocalString(x, ...) NSLocalizedString(x, nil)
+/** NSLocalizedStringFromTable宏做的其实就是在当前bundle中查找资源文件名“xxx.strings”(参数:键＋文件名＋注释) */
+#define AppLocalString(x, ...) NSLocalizedStringFromTable(x, @"someName", nil)
+
+
+
 
