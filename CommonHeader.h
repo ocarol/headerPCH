@@ -619,6 +619,9 @@ __FUNCTION__, \
 // 状态条高度
 #define SCStatusBarHeight [UIApplication sharedApplication].statusBarFrame.size.height
 
+// 去掉图片渲染
+#define KImageOriginalWithName(imageName) [[UIImage imageNamed:imageName] imageWithRenderingMode: UIImageRenderingModeAlwaysOriginal]
+
 // G－C－D
 // 在Main线程上运行
 #define DISPATCH_ON_MAIN_THREAD(mainQueueBlock) dispatch_async(dispatch_get_main_queue(), mainQueueBlock);
